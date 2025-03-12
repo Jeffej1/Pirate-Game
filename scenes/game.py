@@ -1,0 +1,159 @@
+import pygame, json, copy
+from entity import *
+from ui import *
+from background import Background
+from camera import Camera
+from entity.enemies.enemy_manager import EnemyManager
+
+class GameScene:
+    def __init__(self, scene_manager, load_values= None):
+        self.scene_manager = scene_manager
+        self.display = pygame.display.get_surface()
+        self.width, self.height = self.display.get_size()
+        self.assets = self.scene_manager.assets
+
+        if load_values is not None:
+            for i in load_values:
+                if i["type"] == "Player":
+                    self.player = Player(self.assets, i)
+                    self.enemy_manager = EnemyManager(self.assets, self.player)
+                    print("PLAYER LOADED")
+                elif i["type"] == "Projectile":
+                    if i["friendly"]:
+                        self.player.cannonballs.add(Projectile(load_values= i))
+                        print("FRIENDLY CANNONBALL LOADED")
+                    else:
+                        projectile = Projectile(self.assets, load_values= i)
+                        self.enemy_manager.proj_group.add(projectile)
+                        self.enemy_manager.all_sprites.add(projectile)
+                        print("ENEMY CANNONBALL LOADED")
+                elif i["type"] == "BoatEnemy":
+                    boat = BoatEnemy(self.assets, load_values= i)
+                    boat.player_pos = self.enemy_manager.player_pos
+                    self.enemy_manager.boat_group.add(boat)
+                    self.enemy_manager.all_sprites.add(boat)
+                    print("BOAT LOADED")
+                elif i["type"] == "SeaEnemy":
+                    fish = SeaEnemy(self.assets.get("shark"), load_values= i)
+                    fish.player_pos = self.enemy_manager.player_pos
+                    self.enemy_manager.water_group.add(fish)
+                    self.enemy_manager.all_sprites.add(fish)
+                    print("FISH LOADED")
+        else:
+            self.player = Player(self.assets)
+            self.enemy_manager = EnemyManager(self.assets, self.player)
+
+        self.background = Background(self.assets)
+        self.camera = Camera(self.player.pos)
+        self.hud = Hud(self.player)
+
+        self.paused = False
+
+        continue_button = Button((self.width / 2 - 500, self.height / 2 - 325), 1000, 100, '#A06020', '#602000', '#C08040', "CONTINUE", self.unpause, 15, 20, 50)
+        save_button = Button((self.width / 2 - 500, self.height / 2 - 175), 1000, 100, '#A06020', '#602000', '#C08040', "SAVE", self.save_game, 15, 20, 50)
+        load_button = Button((self.width / 2 - 500, self.height / 2 - 25), 1000, 100, '#A06020', '#602000', '#C08040', "LOAD", self.load_game, 15, 20, 50)
+        settings_button = Button((self.width / 2 - 500, self.height / 2 + 125), 1000, 100, '#808080', '#202020', '#A0A0A0', "SETTINGS", self.settings_scene, 15, 20, 50)
+        quit_button = Button((self.width / 2 - 500, self.height / 2 + 275), 1000, 100, '#A06020', '#602000', '#C08040', "QUIT", self.quit_game, 15, 20, 50)
+        end_button = Button((self.width - 100, 100), 100, 100, '#808080', '#202020', '#A0A0A0', "END", self.game_over, 15, 20, 10)
+
+        gui = {
+            "continue": continue_button,
+            "save": save_button,
+            "load": load_button,
+            "settings": settings_button,
+            "quit": quit_button,
+            "end": end_button
+        }
+        self.ui_manager = UIManager(gui)
+
+    def save_game(self):
+        with open('./save.cfg', 'w') as save:
+            save_data = []
+            sprites = copy.deepcopy(list(self.camera.all_sprites)[1:]) # INDEX 0 WILL ALWAYS BE A BACKGROUND SPRITE SO IT DOESNT NEED TO BE SAVED
+            for obj in sprites:
+                obj.type = obj.__class__.__name__
+                save_data.append(obj)
+
+            data = json.dumps(save_data, cls= SetEncoder, indent= 4)
+            save.write(data)
+            save.close()
+
+    def load_game(self):
+        with open('./save.cfg', 'r') as save:
+            try:
+                save_data = json.load(save)
+                self.__init__(self.scene_manager, save_data)
+            except:
+                self.scene_manager.popup("FILE COULDN'T BE LOADED - SAVE DATA IS EITHER EMPTY OR CORRUPTED")  #If no 'save.cfg' file is found or unreadable by json module
+
+            save.close()
+
+    def settings_scene(self):
+        self.scene_manager.change_scene("settings")
+
+    def unpause(self):
+        self.paused = False
+        self.ui_manager.hovering_any = False
+
+    def game_over(self):
+        end_scene = self.scene_manager.scene_list["end"]
+
+        self.camera.render(self.background, self.player, self.player.cannonballs, self.enemy_manager.all_sprites, self.enemy_manager.collectables.all_sprites)
+        end_scene.blur_surface = pygame.transform.gaussian_blur(self.display, 2)
+
+        end_scene.collectables_missed = 0
+        for sprite in self.enemy_manager.collectables.all_sprites:
+            end_scene.collectables_missed +=1
+
+        end_scene.total_killed = self.enemy_manager.total_killed
+        end_scene.boat_killed = self.enemy_manager.boat_killed
+        end_scene.water_killed = self.enemy_manager.water_killed
+        end_scene.health_collected = self.enemy_manager.collectables.health_collected
+        end_scene.treasure = self.player.treasure
+        
+        end_scene.create_text()
+        self.scene_manager.change_scene("end")
+
+    def quit_game(self):
+        self.scene_manager.quit_game()
+
+    def update(self):
+        p_key_pressed = pygame.key.get_just_pressed()[pygame.K_p]
+        if not self.paused:
+            self.player.update()
+            self.enemy_manager.update()
+            self.ui_manager.change_cursor()
+            self.camera.update()
+            self.camera.render(self.background, self.player, self.player.cannonballs, self.enemy_manager.all_sprites, self.enemy_manager.collectables.all_sprites)
+
+            if self.player.health_check(kill_entity= False):
+                self.game_over()
+
+            if p_key_pressed:
+                self.blur_surface = pygame.transform.gaussian_blur(self.display, 2)
+                self.paused = True
+
+            self.hud.update(self.scene_manager.clock.get_fps())
+        else:
+            self.display.blit(self.blur_surface, (0, 0))
+
+            self.ui_manager.update()
+            self.hud.update(self.scene_manager.clock.get_fps())
+
+            if p_key_pressed:
+                self.unpause()
+
+
+class SetEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, pygame.Vector2):
+            return tuple(obj) # CAN'T SERIALISE PYGAME.VECTOR2
+        if isinstance(obj, Entity):
+            obj = obj.__dict__ # NEEDS TO BE DICTIONARY TO BE SERIALISED
+            for i in list(obj.keys()):
+                if isinstance(obj[i], (pygame.sprite.Group, pygame.surface.Surface, pygame.rect.Rect, dict)):
+                    del obj[i] # ATTRIBUTES THAT DON'T NEED TO BE SAVED AND CAN'T BE SERIALISED
+            return obj
+        if isinstance(obj, timer.Timer):
+            return # DON'T NEED THE TIMERS
+        return json.JSONEncoder.default(self, obj)
