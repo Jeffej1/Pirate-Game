@@ -1,6 +1,7 @@
 import pygame, json, copy
 from entity import *
 from ui import *
+from assetloader import Assets
 from background import Background
 from camera import Camera
 from entity.enemies.enemy_manager import EnemyManager
@@ -15,12 +16,12 @@ class GameScene:
         if load_values is not None:
             for i in load_values:
                 if i["type"] == "Player":
-                    self.player = Player(self.assets, i)
+                    self.player = Player(self.assets, load_values= i)
                     self.enemy_manager = EnemyManager(self.assets, self.player)
                     print("PLAYER LOADED")
                 elif i["type"] == "Projectile":
                     if i["friendly"]:
-                        self.player.cannonballs.add(Projectile(load_values= i))
+                        self.player.cannonballs.add(Projectile(self.assets, load_values= i))
                         print("FRIENDLY CANNONBALL LOADED")
                     else:
                         projectile = Projectile(self.assets, load_values= i)
@@ -48,6 +49,7 @@ class GameScene:
         self.hud = Hud(self.player)
 
         self.paused = False
+        self.time_played = 0
 
         continue_button = Button((self.width / 2 - 500, self.height / 2 - 325), 1000, 100, '#A06020', '#602000', '#C08040', "CONTINUE", self.unpause, 15, 20, 50)
         save_button = Button((self.width / 2 - 500, self.height / 2 - 175), 1000, 100, '#A06020', '#602000', '#C08040', "SAVE", self.save_game, 15, 20, 50)
@@ -72,6 +74,7 @@ class GameScene:
             sprites = copy.deepcopy(list(self.camera.all_sprites)[1:]) # INDEX 0 WILL ALWAYS BE A BACKGROUND SPRITE SO IT DOESNT NEED TO BE SAVED
             for obj in sprites:
                 obj.type = obj.__class__.__name__
+                del obj.assets
                 save_data.append(obj)
 
             data = json.dumps(save_data, cls= SetEncoder, indent= 4)
@@ -110,6 +113,7 @@ class GameScene:
         end_scene.water_killed = self.enemy_manager.water_killed
         end_scene.health_collected = self.enemy_manager.collectables.health_collected
         end_scene.treasure = self.player.treasure
+        end_scene.time_played = self.time_played
         
         end_scene.create_text()
         self.scene_manager.change_scene("end")
@@ -134,6 +138,7 @@ class GameScene:
                 self.paused = True
 
             self.hud.update(self.scene_manager.clock.get_fps())
+            self.time_played += 1
         else:
             self.display.blit(self.blur_surface, (0, 0))
 
@@ -143,17 +148,17 @@ class GameScene:
             if p_key_pressed:
                 self.unpause()
 
-
 class SetEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, pygame.Vector2):
-            return tuple(obj) # CAN'T SERIALISE PYGAME.VECTOR2
+            return tuple(obj) # Can't directly serialise a pygame.Vector2
         if isinstance(obj, Entity):
-            obj = obj.__dict__ # NEEDS TO BE DICTIONARY TO BE SERIALISED
+            obj = obj.__dict__ # Needs to be a dictionary to serialise
             for i in list(obj.keys()):
                 if isinstance(obj[i], (pygame.sprite.Group, pygame.surface.Surface, pygame.rect.Rect, dict)):
-                    del obj[i] # ATTRIBUTES THAT DON'T NEED TO BE SAVED AND CAN'T BE SERIALISED
+                    del obj[i] # Attributes that don't need to be saved or can't be serialised
             return obj
+        # Not needed to be saved
         if isinstance(obj, timer.Timer):
-            return # DON'T NEED THE TIMERS
-        return json.JSONEncoder.default(self, obj)
+            return
+        return json.JSONEncoder.default(self, obj) # Serialises normally if it isn't any of the above

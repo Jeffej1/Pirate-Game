@@ -37,7 +37,7 @@ class SeaEnemy(Entity):
 
         dist = math.hypot(dx, dy)
 
-        if dist > 80:
+        if dist > 75:
             self.pos += pygame.Vector2(dx, dy).normalize() * 3
 
     def update(self):

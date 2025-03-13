@@ -19,7 +19,7 @@ class CollectableManager:
         for sprite in self.all_sprites:
             if pygame.sprite.collide_mask(self.player, sprite):
                 if sprite.__class__.__name__ == "Plank":
-                    health_collected += 1
+                    self.health_collected += 1
                 sprite.on_collect(self.player)
                 sprite.kill()
 

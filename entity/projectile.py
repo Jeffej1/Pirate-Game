@@ -3,9 +3,9 @@ from .entity import Entity
 from .timer import Timer
 
 class Projectile(Entity):
-    def __init__(self, projectile_assets, pos: pygame.Vector2= (0, 0), angle= 0,  player_pos: pygame.Vector2= (0, 0), accel= 1, friendly= False, load_values= None):
+    def __init__(self, assets, pos: pygame.Vector2= (0, 0), angle= 0,  player_pos: pygame.Vector2= (0, 0), accel= 1, friendly= False, load_values= None):
         super().__init__()
-        self.assets = projectile_assets
+        self.assets = assets
         self.image = self.assets.get("cannonball")
         self.splash_surf = self.assets.get("cannonball_splash")
         self.rect = self.image.get_rect()

@@ -30,7 +30,22 @@ class GameOverScene:
     def settings_scene(self):
         self.scene_manager.change_scene("settings")
 
+    def create_score(self) -> float:
+        score = 0
+        score += self.total_killed * 150
+        score += self.boat_killed * 50 + self.water_killed * 30
+        score += self.treasure * 30
+        score -= self.collectables_missed * 33
+        score -= self.health_collected * 11
+        time_multipler = (self.collectables_missed * 500 / self.time_played)
+        collectables_missed_multiplier = self.collectables_missed / ((self.treasure / 5) + self.health_collected + self.collectables_missed)
+
+        score *= collectables_missed_multiplier
+        score * 100
+        return score
+
     def create_text(self):
+        print(self.create_score())
         font = pygame.font.SysFont('segoeuiblack', 50)
 
         text = f"TREASURE COLLECTED: {self.treasure}\nENEMY BOATS KILLED: {self.boat_killed}\nSHARKS KILLED: {self.water_killed}\nTOTAL KILLED: {self.total_killed}\nPLANKS USED: {self.health_collected}\nCOLLECTABLES MISSED: {self.collectables_missed}"

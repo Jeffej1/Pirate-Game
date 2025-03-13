@@ -15,9 +15,9 @@ class BoatEnemy(Entity):
 
         self.player_pos = player_pos
         self.treasure = random.randint(0, 2)
-        self.plank = 5 if random.random() < 0.1 else 2
+        self.plank = 3 if random.random() < 0.1 else 2
 
-        self.angle = 0
+        self.angle = self.desired_angle = 0
         self.health = self.max_health = 15
         self.cannonballs = pygame.sprite.Group()
         self.direction = pygame.Vector2(0, 0)

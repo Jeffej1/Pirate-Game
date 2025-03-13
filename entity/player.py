@@ -4,11 +4,11 @@ from .entity import *
 from .timer import *
 
 class Player(Entity):
-    def __init__(self, player_assets: pygame.surface.Surface, load_values= None):
+    def __init__(self, assets: pygame.surface.Surface, load_values= None):
         super().__init__()
         self.display = pygame.display.get_surface()
         self.width, self.height = self.display.get_size()
-        self.assets = player_assets
+        self.assets = assets
         self.image = self.assets.get("boat")
         self.rect = self.image.get_rect()
         self.original = self.image
