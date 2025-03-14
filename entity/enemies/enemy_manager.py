@@ -59,6 +59,25 @@ class EnemyManager:
             if pygame.sprite.collide_mask(self.player, proj):
                 proj.kill()
                 self.player.remove_health(5)
+                
+    def border_collision(self, x_pos, y_pos):
+        collided = False
+        if x_pos >= config.border_dist: 
+            x_pos = config.border_dist
+            collided = True
+        if x_pos <= -config.border_dist: 
+            x_pos = -config.border_dist
+            collided = True
+        if y_pos >= config.border_dist:
+            y_pos = config.border_dist
+            collided = True
+        if y_pos <= -config.border_dist: 
+            y_pos = -config.border_dist
+            collided = True
+
+        if collided:
+            return True
+        return False
 
     def get_spawn_pos(self) -> pygame.Vector2:
         spawn_direction = random.randint(1, 4)
@@ -86,6 +105,9 @@ class EnemyManager:
 
         x_pos = random.randrange(int(x_start), int(x_end))
         y_pos = random.randrange(int(y_start), int(y_end))
+
+        if self.border_collision(x_pos, y_pos):
+            x_pos, y_pos = self.get_spawn_pos()
 
         return pygame.Vector2((x_pos, y_pos))
 

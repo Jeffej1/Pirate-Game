@@ -37,8 +37,8 @@ class GameOverScene:
         score += self.treasure * 30
         score -= self.collectables_missed * 33
         score -= self.health_collected * 11
-        time_multipler = (self.collectables_missed * 500 / self.time_played)
-        collectables_missed_multiplier = self.collectables_missed / ((self.treasure / 5) + self.health_collected + self.collectables_missed)
+        time_multipler = (self.treasure * 500 / self.time_played)
+        collectables_missed_multiplier = self.collectables_missed / ((self.treasure / 5) + self.health_collected + self.collectables_missed + 1) # +1 incase of total collected being 0
 
         score *= collectables_missed_multiplier
         score * 100

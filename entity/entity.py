@@ -14,6 +14,7 @@ class Entity(pygame.sprite.Sprite):
 
     def add_health(self, health_added: float):
         self.health += health_added
+        self.health = self.max_health if self.health > self.max_health else self.health
 
     def health_check(self, kill_entity= True):
         if self.health <= 0:
