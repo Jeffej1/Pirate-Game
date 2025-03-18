@@ -1,4 +1,4 @@
-import pygame, json, copy
+import pygame, json, copy, constants
 from entity import *
 from ui import *
 from assetloader import Assets
@@ -10,7 +10,6 @@ class GameScene:
     def __init__(self, scene_manager, load_values= None):
         self.scene_manager = scene_manager
         self.display = pygame.display.get_surface()
-        self.width, self.height = self.display.get_size()
         self.assets = self.scene_manager.assets
 
         if load_values is not None:
@@ -46,17 +45,17 @@ class GameScene:
 
         self.background = Background(self.assets)
         self.camera = Camera(self.player.pos)
-        self.hud = Hud(self.player)
+        self.hud = HUD(self.player)
 
         self.paused = False
         self.time_played = 0
 
-        continue_button = Button((self.width / 2 - 500, self.height / 2 - 325), 1000, 100, '#A06020', '#602000', '#C08040', "CONTINUE", self.unpause, 15, 20, 50)
-        save_button = Button((self.width / 2 - 500, self.height / 2 - 175), 1000, 100, '#A06020', '#602000', '#C08040', "SAVE", self.save_game, 15, 20, 50)
-        load_button = Button((self.width / 2 - 500, self.height / 2 - 25), 1000, 100, '#A06020', '#602000', '#C08040', "LOAD", self.load_game, 15, 20, 50)
-        settings_button = Button((self.width / 2 - 500, self.height / 2 + 125), 1000, 100, '#808080', '#202020', '#A0A0A0', "SETTINGS", self.settings_scene, 15, 20, 50)
-        quit_button = Button((self.width / 2 - 500, self.height / 2 + 275), 1000, 100, '#A06020', '#602000', '#C08040', "QUIT", self.quit_game, 15, 20, 50)
-        end_button = Button((self.width - 100, 100), 100, 100, '#808080', '#202020', '#A0A0A0', "END", self.game_over, 15, 20, 10)
+        continue_button = Button((constants.WIDTH / 2 - 500, constants.HEIGHT / 2 - 325), 1000, 100, '#A06020', '#602000', '#C08040', "CONTINUE", self.unpause, 15, 20, 50)
+        save_button = Button((constants.WIDTH / 2 - 500, constants.HEIGHT / 2 - 175), 1000, 100, '#A06020', '#602000', '#C08040', "SAVE", self.save_game, 15, 20, 50)
+        load_button = Button((constants.WIDTH / 2 - 500, constants.HEIGHT / 2 - 25), 1000, 100, '#A06020', '#602000', '#C08040', "LOAD", self.load_game, 15, 20, 50)
+        settings_button = Button((constants.WIDTH / 2 - 500, constants.HEIGHT / 2 + 125), 1000, 100, '#808080', '#202020', '#A0A0A0', "SETTINGS", self.settings_scene, 15, 20, 50)
+        quit_button = Button((constants.WIDTH / 2 - 500, constants.HEIGHT / 2 + 275), 1000, 100, '#A06020', '#602000', '#C08040', "QUIT", self.quit_game, 15, 20, 50)
+        end_button = Button((constants.WIDTH - 100, 100), 100, 100, '#808080', '#202020', '#A0A0A0', "END", self.game_over, 15, 20, 10)
 
         gui = {
             "continue": continue_button,

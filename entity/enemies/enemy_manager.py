@@ -1,4 +1,4 @@
-import pygame, random, math, config
+import pygame, random, math, constants
 from ..entity import Entity
 from .boat_enemy import BoatEnemy
 from .sea_enemy import SeaEnemy
@@ -8,7 +8,6 @@ from ..timer import Timer
 class EnemyManager:
     def __init__(self, assets, player):
         self.display = pygame.display.get_surface()
-        self.width, self.height = self.display.get_size()
         self.assets = assets
 
         self.player = player
@@ -62,17 +61,17 @@ class EnemyManager:
                 
     def border_collision(self, x_pos, y_pos):
         collided = False
-        if x_pos >= config.border_dist: 
-            x_pos = config.border_dist
+        if x_pos >= constants.border_dist: 
+            x_pos = constants.border_dist
             collided = True
-        if x_pos <= -config.border_dist: 
-            x_pos = -config.border_dist
+        if x_pos <= -constants.border_dist: 
+            x_pos = -constants.border_dist
             collided = True
-        if y_pos >= config.border_dist:
-            y_pos = config.border_dist
+        if y_pos >= constants.border_dist:
+            y_pos = constants.border_dist
             collided = True
-        if y_pos <= -config.border_dist: 
-            y_pos = -config.border_dist
+        if y_pos <= -constants.border_dist: 
+            y_pos = -constants.border_dist
             collided = True
 
         if collided:
@@ -83,24 +82,24 @@ class EnemyManager:
         spawn_direction = random.randint(1, 4)
 
         if spawn_direction == 1: # LEFT
-            x_start = self.player_pos.x - self.width / 2 - 500
+            x_start = self.player_pos.x - constants.WIDTH / 2 - 500
             x_end = x_start + 450
-            y_start = self.player_pos.y - self.height / 2 - 500
-            y_end = self.player_pos.y + self.height / 2 + 500
+            y_start = self.player_pos.y - constants.HEIGHT / 2 - 500
+            y_end = self.player_pos.y + constants.HEIGHT / 2 + 500
         elif spawn_direction == 2: # RIGHT
-            x_start = self.player_pos.x + self.width / 2 + 50
+            x_start = self.player_pos.x + constants.WIDTH / 2 + 50
             x_end = x_start + 450
-            y_start = self.player_pos.y - self.height / 2 - 500
-            y_end = self.player_pos.y + self.height / 2 + 500
+            y_start = self.player_pos.y - constants.HEIGHT / 2 - 500
+            y_end = self.player_pos.y + constants.HEIGHT / 2 + 500
         elif spawn_direction == 3: # DOWN
-            x_start = self.player_pos.x - self.width / 2 - 500
-            x_end = self.player_pos.x + self.width / 2 + 500
-            y_start = self.player_pos.x - self.height / 2 - 500
+            x_start = self.player_pos.x - constants.WIDTH / 2 - 500
+            x_end = self.player_pos.x + constants.WIDTH / 2 + 500
+            y_start = self.player_pos.x - constants.HEIGHT / 2 - 500
             y_end = y_start + 450
         elif spawn_direction == 4: # UP
-            x_start = self.player_pos.x - self.width / 2 - 500
-            x_end = self.player_pos.y + self.width / 2 + 500
-            y_start = self.player_pos.y + self.height / 2 + 50
+            x_start = self.player_pos.x - constants.WIDTH / 2 - 500
+            x_end = self.player_pos.y + constants.WIDTH / 2 + 500
+            y_start = self.player_pos.y + constants.HEIGHT / 2 + 50
             y_end = y_start + 450
 
         x_pos = random.randrange(int(x_start), int(x_end))

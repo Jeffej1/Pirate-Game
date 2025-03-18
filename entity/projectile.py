@@ -1,4 +1,4 @@
-import pygame, math, config
+import pygame, math, constants
 from .entity import Entity
 from .timer import Timer
 
@@ -9,7 +9,6 @@ class Projectile(Entity):
         self.image = self.assets.get("cannonball")
         self.splash_surf = self.assets.get("cannonball_splash")
         self.rect = self.image.get_rect()
-        self.width, self.height = pygame.display.get_surface().get_size()
 
         self.zlayer = 2
         self.friendly = friendly
@@ -40,7 +39,7 @@ class Projectile(Entity):
         self.direction = (math.cos(angle) * 5, math.sin(angle) * 5)
 
     def get_direction_to_mouse(self):
-        dx, dy = self.mouse_pos - pygame.Vector2(self.width / 2, self.height / 2)
+        dx, dy = self.mouse_pos - pygame.Vector2(constants.WIDTH / 2, constants.HEIGHT / 2)
         angle = math.atan2(dy, dx)
         self.direction = (math.cos(angle) * 5, -math.sin(angle) * 5)
 
@@ -63,10 +62,10 @@ class Projectile(Entity):
             self.kill()
 
     def border_collision(self):
-        if -config.border_dist >= self.pos.x or self.pos.x >= config.border_dist:
+        if -constants.border_dist >= self.pos.x or self.pos.x >= constants.border_dist:
             if not self.dead:
                 self.splash()
-        if -config.border_dist >= self.pos.y or self.pos.y >= config.border_dist:
+        if -constants.border_dist >= self.pos.y or self.pos.y >= constants.border_dist:
             if not self.dead:
                 self.splash()
 

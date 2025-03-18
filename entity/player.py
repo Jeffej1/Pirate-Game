@@ -7,7 +7,6 @@ class Player(Entity):
     def __init__(self, assets: pygame.surface.Surface, load_values= None):
         super().__init__()
         self.display = pygame.display.get_surface()
-        self.width, self.height = self.display.get_size()
         self.assets = assets
         self.image = self.assets.get("boat")
         self.rect = self.image.get_rect()
@@ -18,9 +17,13 @@ class Player(Entity):
         self.treasure = 0
         self.ammo = self.max_ammo = 4
         self.vel = self.angle = 0
+        self.max_vel = 2.2
+        self.rotation_speed = 1.5
         self.pos = pygame.Vector2(0,0)
-
-        COOLDOWN_DURATION, RELOAD_DURATION, INVINCIBILITY_DURATION = 500, 600, 2_000
+        
+        INVINCIBILITY_DURATION = 2_000
+        reload_duration = 600
+        cooldown_duration = 500
         self.loaded_cannonball = True
         self.cannonballs = pygame.sprite.Group()
         self.reloading = False
@@ -35,8 +38,8 @@ class Player(Entity):
                 setattr(self, key, value)
             self.image = pygame.transform.rotate(self.original, self.angle)
 
-        self.reload_timer = Timer(RELOAD_DURATION)
-        self.cooldown_timer = Timer(COOLDOWN_DURATION)
+        self.reload_timer = Timer(reload_duration)
+        self.cooldown_timer = Timer(cooldown_duration)
         self.damage_cooldown = Timer(INVINCIBILITY_DURATION)
         
     def get_input(self):
@@ -44,16 +47,16 @@ class Player(Entity):
         key_down = pygame.key.get_just_pressed()
         mouse = pygame.mouse.get_pressed()
 
-        if keys[pygame.K_w] and self.vel < 2.2: # MAX SHOULD BE 2.2
+        if keys[pygame.K_w] and self.vel < self.max_vel: 
             self.vel += 0.02
         if keys[pygame.K_a]:
             self.image = pygame.transform.rotate(self.original, self.angle)
-            self.angle += 1.5
-        if keys[pygame.K_s] and self.vel > -2:
+            self.angle += self.rotation_speed
+        if keys[pygame.K_s] and self.vel > -self.max_vel - 0.2:
             self.vel -= 0.02
         if keys[pygame.K_d]:
             self.image = pygame.transform.rotate(self.original, self.angle)
-            self.angle -= 1.5
+            self.angle -= self.rotation_speed
         if keys[pygame.K_SPACE] and self.vel != 0:
             if self.vel > 0:
                 self.vel -= 0.05

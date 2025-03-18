@@ -1,10 +1,9 @@
-import pygame
+import pygame, constants
 from .cursor import Cursor
 
-class Hud:
+class HUD:
     def __init__(self, player):
         self.display = pygame.display.get_surface()
-        self.width, self.height = self.display.get_size()
         self.extra_active = False
         self.player = player
         self.cursor = Cursor()
@@ -33,16 +32,16 @@ class Hud:
         
     def display_ammo(self):
         for i in range(self.player.ammo):
-            pygame.draw.circle(self.display, '#181c1c', (self.width - 30 - 42 * i, self.height - 30), 20)
+            pygame.draw.circle(self.display, '#181c1c', (constants.WIDTH - 30 - 42 * i, constants.HEIGHT - 30), 20)
 
         if self.player.ammo == 0:
             no_ammo_text = self.font.render("NO AMMO - 'R' TO RELOAD", True, '#141414')
-            no_ammo_rect = no_ammo_text.get_rect(midright = (self.width - 30, self.height - 30))
+            no_ammo_rect = no_ammo_text.get_rect(midright = (constants.WIDTH - 30, constants.HEIGHT - 30))
             self.display.blit(no_ammo_text, no_ammo_rect)
 
     def display_treasure(self):
         treasure_text = self.font.render(f"TREASURE: {self.player.treasure * 5}", True, '#202020')
-        treasure_rect = treasure_text.get_rect(right = self.width - 5)
+        treasure_rect = treasure_text.get_rect(right = constants.WIDTH - 5)
 
         self.display.blit(treasure_text, treasure_rect)
     
@@ -66,7 +65,7 @@ class Hud:
         self.display.blit(pos_text, pos_rect)
 
     def update(self, fps: float):
-        self.width, self.height = self.display.get_size()
+        constants.WIDTH, constants.HEIGHT = self.display.get_size()
 
         self.check_f3()
         if self.extra_active:

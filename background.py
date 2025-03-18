@@ -1,10 +1,10 @@
-import pygame, config
+import pygame, constants
 
 class Background(pygame.sprite.Sprite):
     def __init__(self, assets):
         super().__init__()
         self.display = pygame.display.get_surface()
-        self.width, self.height = self.display.get_size()
+        constants.WIDTH, constants.HEIGHT = self.display.get_size()
         self.water = assets.get("water")
         self.beach = assets.get("beach")
         self.zlayer = 0
@@ -14,8 +14,8 @@ class Background(pygame.sprite.Sprite):
         self.draw_image()
 
     def draw_image(self):
-        water_diameter = 2 * config.border_dist
-        beach_section = pygame.Surface((water_diameter + self.width, self.width / 2))
+        water_diameter = 2 * constants.border_dist
+        beach_section = pygame.Surface((water_diameter + constants.WIDTH, constants.WIDTH / 2))
         water_section = pygame.Surface((water_diameter, water_diameter))
 
         for x in range(0, water_section.get_width(), 128):
@@ -27,8 +27,8 @@ class Background(pygame.sprite.Sprite):
                 beach_section.blit(self.beach, (x, y))
 
         self.image = pygame.Surface((beach_section.get_width(), beach_section.get_width()))
-        self.image.blit(water_section, water_section.get_rect(topleft = (self.width / 2, self.width / 2)))
+        self.image.blit(water_section, water_section.get_rect(topleft = (constants.WIDTH / 2, constants.WIDTH / 2)))
         self.image.blit(beach_section, (0, 0))
         self.image.blit(pygame.transform.rotate(beach_section, 90), beach_section.get_rect())
         self.image.blit(pygame.transform.rotate(beach_section, 180), beach_section.get_rect(bottom = self.image.get_height()))
-        self.image.blit(pygame.transform.rotate(beach_section, 270), beach_section.get_rect(left = self.image.get_height() - self.width / 2))
+        self.image.blit(pygame.transform.rotate(beach_section, 270), beach_section.get_rect(left = self.image.get_height() - constants.WIDTH / 2))

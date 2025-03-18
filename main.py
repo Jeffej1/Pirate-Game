@@ -1,11 +1,10 @@
-import pygame, sys, scenes
+import pygame, sys, scenes, constants
 from scenes.scenemanager import SceneManager
 
 class MainGame:
     def __init__(self):
         pygame.init()
-        self.width, self.height = 1600, 900
-        self.display = pygame.display.set_mode((self.width, self.height))
+        self.display = pygame.display.set_mode((constants.WIDTH, constants.HEIGHT))
         pygame.display.set_caption("YARGHHH")
         self.scene_manager = SceneManager()
 

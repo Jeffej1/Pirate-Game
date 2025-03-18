@@ -1,18 +1,19 @@
-import pygame, sys
+import pygame, sys, constants
 from ui import *
 
 class MenuScene:
     def __init__(self, scene_manager):
         self.scene_manager = scene_manager
         self.display = pygame.display.get_surface()
+
         self.image = self.scene_manager.load_asset("main_menu")
         self.rect = self.image.get_rect()
-        self.width, self.height = self.display.get_size()
+        
         self.cursor = Cursor()
 
-        play_button = Button((self.width - 500, self.height / 2 - 250), 450, 200, '#A06020', '#602000', '#C08040', "PLAY", self.game_scene, 15, 30, 80)
-        continue_button = Button((self.width - 500, self.height / 2), 450, 200, '#A06020', '#602000', '#C08040', "CONTINUE", self.load_game, 15, 30, 70)
-        quit_button = Button((self.width - 475, self.height - 200), 400, 150, '#A06020', '#602000', '#C08040', "QUIT", self.quit_game, 15, 30, 60)
+        play_button = Button((constants.WIDTH - 500, constants.HEIGHT / 2 - 250), 450, 200, '#A06020', '#602000', '#C08040', "PLAY", self.game_scene, 15, 30, 80)
+        continue_button = Button((constants.WIDTH - 500, constants.HEIGHT / 2), 450, 200, '#A06020', '#602000', '#C08040', "CONTINUE", self.load_game, 15, 30, 70)
+        quit_button = Button((constants.WIDTH - 475, constants.HEIGHT - 200), 400, 150, '#A06020', '#602000', '#C08040', "QUIT", self.quit_game, 15, 30, 60)
         settings_button = Button((25, 20), 125, 50, '#808080', '#202020', '#A0A0A0', "OPTIONS", self.settings_scene, 10, 40, 20)
 
         gui = {

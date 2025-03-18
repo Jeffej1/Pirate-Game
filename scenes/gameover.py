@@ -1,17 +1,16 @@
-import pygame
+import pygame, constants
 from ui import *
 
 class GameOverScene:
     def __init__(self, scene_manager):
         self.scene_manager = scene_manager
         self.display = pygame.display.get_surface()
-        self.width, self.height = self.display.get_size()
 
         self.cursor = Cursor()
 
-        restart_button = Button((self.width / 2 - 500, self.height - 400), 1000, 100, '#A06020', '#602000', '#C08040', "RESTART", self.restart, 15, 20, 50)
-        settings_button = Button((self.width / 2 - 500, self.height - 275), 1000, 100, '#808080', '#202020', '#A0A0A0', "SETTINGS", self.settings_scene, 15, 20, 50)
-        quit_button = Button((self.width / 2 - 500, self.height - 150), 1000, 100, '#A06020', '#602000', '#C08040', "QUIT", self.quit_game, 15, 20, 50)
+        restart_button = Button((constants.WIDTH / 2 - 500, self.height - 400), 1000, 100, '#A06020', '#602000', '#C08040', "RESTART", self.restart, 15, 20, 50)
+        settings_button = Button((constants.WIDTH / 2 - 500, self.height - 275), 1000, 100, '#808080', '#202020', '#A0A0A0', "SETTINGS", self.settings_scene, 15, 20, 50)
+        quit_button = Button((constants.WIDTH / 2 - 500, self.height - 150), 1000, 100, '#A06020', '#602000', '#C08040', "QUIT", self.quit_game, 15, 20, 50)
 
         gui = {
             "restart": restart_button,
@@ -41,20 +40,23 @@ class GameOverScene:
         collectables_missed_multiplier = self.collectables_missed / ((self.treasure / 5) + self.health_collected + self.collectables_missed + 1) # +1 incase of total collected being 0
 
         score *= collectables_missed_multiplier
-        score * 100
+        score *= 100
         return score
 
     def create_text(self):
-        print(self.create_score())
         font = pygame.font.SysFont('segoeuiblack', 50)
 
         text = f"TREASURE COLLECTED: {self.treasure}\nENEMY BOATS KILLED: {self.boat_killed}\nSHARKS KILLED: {self.water_killed}\nTOTAL KILLED: {self.total_killed}\nPLANKS USED: {self.health_collected}\nCOLLECTABLES MISSED: {self.collectables_missed}"
+        score = str(self.create_score())
 
         self.text_surf = font.render(text, True, '#202020')
         self.text_rect = self.text_surf.get_rect(center = (800, 250))
+        self.score_surf = font.render(score, True, '#202020')
+        self.score_rect = self.score_surf.get_rect(center = (1400, 250))
         
     def display_text(self):
         self.display.blit(self.text_surf, self.text_rect)
+        self.display.blit(self.score_surf, self.score_rect)
 
     def update(self):
         self.display.blit(self.blur_surface, (0, 0))

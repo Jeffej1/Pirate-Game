@@ -5,7 +5,6 @@ class SettingsScene:
     def __init__(self, scene_manager):
         self.scene_manager = scene_manager
         self.display = pygame.display.get_surface()
-        self.width, self.height = self.display.get_size()
         self.cursor = Cursor()
 
         self.read_cfg()

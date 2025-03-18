@@ -1,4 +1,4 @@
-import pygame, config
+import pygame, constants
 
 class Entity(pygame.sprite.Sprite):
     def __init__(self):
@@ -25,17 +25,17 @@ class Entity(pygame.sprite.Sprite):
 
     def border_collision(self):
         collided = False
-        if self.pos.x >= config.border_dist: 
-            self.pos.x = config.border_dist
+        if self.pos.x >= constants.border_dist: 
+            self.pos.x = constants.border_dist
             collided = True
-        if self.pos.x <= -config.border_dist: 
-            self.pos.x = -config.border_dist
+        if self.pos.x <= -constants.border_dist: 
+            self.pos.x = -constants.border_dist
             collided = True
-        if self.pos.y >= config.border_dist:
-            self.pos.y = config.border_dist
+        if self.pos.y >= constants.border_dist:
+            self.pos.y = constants.border_dist
             collided = True
-        if self.pos.y <= -config.border_dist: 
-            self.pos.y = -config.border_dist
+        if self.pos.y <= -constants.border_dist: 
+            self.pos.y = -constants.border_dist
             collided = True
 
         if collided:
