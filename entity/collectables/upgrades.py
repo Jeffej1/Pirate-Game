@@ -2,7 +2,7 @@ import pygame, random, constants
 from entity import Entity
 
 class Upgrade(Entity):
-    def __init__(self, assets, player, pos, load_values = None):
+    def __init__(self, assets, player, pos= (0, 0), load_values = None):
         super().__init__()
         self.image = pygame.Surface((32, 32))
         self.image.fill('#E0C0C0')

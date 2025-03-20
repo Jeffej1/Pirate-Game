@@ -19,7 +19,3 @@ class MainGame:
             
 if __name__ == "__main__":
     MainGame().run()
-
-# TODO
-# UPGRADES?
-# SOUND

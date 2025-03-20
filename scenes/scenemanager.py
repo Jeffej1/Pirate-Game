@@ -1,5 +1,6 @@
 import pygame, scenes, sys, json
 from assetloader import Assets
+from soundloader import Sounds
 from entity.timer import Timer
 
 class SceneManager:
@@ -8,6 +9,8 @@ class SceneManager:
         self.current_scene = "menu"
         self.previous_scene = "menu"
         self.assets = Assets()
+        self.sounds = Sounds()
+        print(self.sounds.sounds)
         self.popup_active = False
         self.scene_list = {
             "menu": scenes.MenuScene(self),
@@ -20,6 +23,7 @@ class SceneManager:
 
     def change_scene(self, new_scene):
         self.previous_scene, self.current_scene = self.current_scene, new_scene
+        self.sounds.play("qw3rtyujiycdx")
 
     def get_current_scene(self):
         return self.current_scene

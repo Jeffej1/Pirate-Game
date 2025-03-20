@@ -4,10 +4,12 @@ from .entity import *
 from .timer import *
 
 class Player(Entity):
-    def __init__(self, assets: pygame.surface.Surface, load_values= None):
+    def __init__(self, assets, sounds, load_values= None):
         super().__init__()
         self.display = pygame.display.get_surface()
         self.assets = assets
+        self.sounds = sounds
+
         self.image = self.assets.get("boat")
         self.rect = self.image.get_rect()
         self.original = self.image
@@ -40,8 +42,8 @@ class Player(Entity):
             for key, value in load_values.items():
                 if key == "pos":
                     value = pygame.Vector2(value)
-                if value is type(dict):
-                    value = None
+                # if value is type(dict):
+                #     value = None
                 setattr(self, key, value)
             self.image = pygame.transform.rotate(self.original, self.angle)
 
@@ -94,6 +96,7 @@ class Player(Entity):
         if self.ammo > 0 and self.reload_timer.finished():
             self.cannonballs.add(Projectile(self.assets, self.pos, self.angle, accel= self.accel, friendly= True))
             self.ammo -= 1
+            self.sounds.play("cannonball")
 
     def reload_proj(self):
         if self.ammo < self.max_ammo and self.reload_timer.finished():
@@ -121,7 +124,6 @@ class Player(Entity):
         self.move()
         self.proj_cooldown()
         self.cannonballs.update()
-        print(self.upgrades)
 
         if self.border_collision() and self.damage_cooldown.finished():
             self.damage_cooldown.reset()

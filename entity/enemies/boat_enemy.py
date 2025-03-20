@@ -31,7 +31,7 @@ class BoatEnemy(Entity):
                 setattr(self, key, value)
             self.image = pygame.transform.rotate(self.original, self.angle)
 
-        self.cooldown = Timer(1_500)
+        self.cooldown = Timer(2_000)
         self.damage_cooldown = Timer(1_000)
 
     def get_turn_direction(self, current_angle, target_angle) -> int:
@@ -45,9 +45,8 @@ class BoatEnemy(Entity):
 
     def rotate_to_player(self):
         self.desired_angle = int(math.degrees(math.atan2(self.dy, self.dx)) + 270) % 360
-
         self.angle += self.get_turn_direction(self.angle, self.desired_angle) 
-
+        
         self.image = pygame.transform.rotate(self.original, self.angle)
 
     def avoid_player(self):

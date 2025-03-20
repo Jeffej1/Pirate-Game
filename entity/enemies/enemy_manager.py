@@ -6,9 +6,10 @@ from ..collectables.collectable_manager import CollectableManager
 from ..timer import Timer
 
 class EnemyManager:
-    def __init__(self, assets, player):
+    def __init__(self, assets, sounds, player):
         self.display = pygame.display.get_surface()
         self.assets = assets
+        self.sounds = sounds
 
         self.player = player
         self.player_pos = player.pos
@@ -26,9 +27,10 @@ class EnemyManager:
         self.max_water = 3
         self.max_boat = 2
         self.total_killed = self.boat_killed = self.water_killed = 0
+        self.enemies_spawned = 0
         self.upgrade_due = False
 
-        self.collectables = CollectableManager(self.assets, self.player)
+        self.collectables = CollectableManager(self.assets, self.sounds, self.player)
 
     def enemy_collisions(self):
         for enemy in self.enemy_group:
@@ -36,16 +38,19 @@ class EnemyManager:
             if pygame.sprite.spritecollide(enemy, self.player_proj, True) and not enemy.invincible:
                 enemy.remove_health(5)
                 enemy.invincible = True
+                self.sounds.play("hit")
             if pygame.sprite.collide_mask(enemy, self.player) and not enemy.invincible:
                 if enemy_type == "BoatEnemy":
                     self.player.remove_health(5)
                     enemy.invincible = True
                     enemy.remove_health(5)
+                    self.sounds.play("hit")
                 elif enemy_type == "SeaEnemy":
                     if enemy.attack_cooldown.finished():
                         self.player.remove_health(5)
                         enemy.remove_health(1)
                         enemy.attack_cooldown.reset()
+                        self.sounds.play("hit")
 
             if enemy.health_check():
                 self.total_killed += 1
@@ -53,12 +58,14 @@ class EnemyManager:
                     self.boat_killed +=1
                 elif enemy_type == "SeaEnemy":
                     self.water_killed += 1
+                self.sounds.play("enemy_death")
                 self.collectables.spawn_collectable(enemy.pos, plank= enemy.plank, treasure= enemy.treasure, upgrade= enemy.upgrade)
 
         for proj in self.proj_group:
             if pygame.sprite.collide_mask(self.player, proj):
                 proj.kill()
                 self.player.remove_health(5)
+                self.sounds.play("hit")
                 
     def border_collision(self, x_pos, y_pos):
         collided = False
@@ -80,7 +87,7 @@ class EnemyManager:
         return False
     
     def get_upgrade(self):
-        if (self.total_killed + 1) % 5 == 0:
+        if (self.enemies_spawned + 1) % 5 == 0:
             self.upgrade_due = True
         
         if self.upgrade_due:
@@ -126,14 +133,16 @@ class EnemyManager:
             self.enemy_group.add(self.boat_group.sprites()[-1])
             self.all_sprites.add(self.boat_group)
             self.boat_spawn_timer.reset()
+            self.enemies_spawned += 1
         elif self.boat_spawn_timer.finished() and len(self.boat_group.sprites()) == self.max_boat:
             self.boat_spawn_timer.reset()
 
         if self.water_spawn_timer.finished() and len(self.water_group.sprites()) != self.max_water:
-            self.water_group.add(SeaEnemy(self.assets.get("shark"), self.get_spawn_pos(), self.player_pos, self.get_upgrade()))
+            self.water_group.add(SeaEnemy(self.assets, self.get_spawn_pos(), self.player_pos, self.get_upgrade()))
             self.enemy_group.add(self.water_group.sprites()[-1])
             self.all_sprites.add(self.water_group)
             self.water_spawn_timer.reset()
+            self.enemies_spawned += 1
         elif self.water_spawn_timer.finished() and len(self.water_group.sprites()) == self.max_boat:
             self.water_spawn_timer.reset()
 

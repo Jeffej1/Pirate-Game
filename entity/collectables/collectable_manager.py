@@ -3,9 +3,11 @@ from .collectable import Plank, Treasure
 from .upgrades import Upgrade
 
 class CollectableManager:
-    def __init__(self, assets, player):
+    def __init__(self, assets, sounds, player):
         self.display = pygame.display.get_surface()
         self.assets = assets
+        self.sounds = sounds
+
         self.player = player
         self.all_sprites = pygame.sprite.Group()
 
@@ -24,6 +26,10 @@ class CollectableManager:
             if pygame.sprite.collide_mask(self.player, sprite):
                 if sprite.__class__.__name__ == "Plank":
                     self.health_collected += 1
+                if sprite.__class__.__name__ == "Upgrade":
+                    self.sounds.play("upgrade")
+                else:
+                    self.sounds.play("collectable")
                 sprite.on_collect(self.player)
                 sprite.kill()
 

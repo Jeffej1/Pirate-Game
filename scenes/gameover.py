@@ -46,12 +46,12 @@ class GameOverScene:
         font = pygame.font.SysFont('segoeuiblack', 50)
 
         text = f"TREASURE COLLECTED: {self.treasure}\nENEMY BOATS KILLED: {self.boat_killed}\nSHARKS KILLED: {self.water_killed}\nTOTAL KILLED: {self.total_killed}\nPLANKS USED: {self.health_collected}\nCOLLECTABLES MISSED: {self.collectables_missed}"
-        score = str(self.create_score())
+        score = f"SCORE: {self.create_score()}"
 
         self.text_surf = font.render(text, True, '#202020')
         self.text_rect = self.text_surf.get_rect(center = (800, 250))
         self.score_surf = font.render(score, True, '#202020')
-        self.score_rect = self.score_surf.get_rect(center = (1400, 250))
+        self.score_rect = self.score_surf.get_rect(center = (1300, 250))
         
     def display_text(self):
         self.display.blit(self.text_surf, self.text_rect)

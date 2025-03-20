@@ -11,12 +11,13 @@ class GameScene:
         self.scene_manager = scene_manager
         self.display = pygame.display.get_surface()
         self.assets = self.scene_manager.assets
+        self.sounds = self.scene_manager.sounds
 
         if load_values is not None:
             for i in load_values:
                 if i["type"] == "Player":
-                    self.player = Player(self.assets, load_values= i)
-                    self.enemy_manager = EnemyManager(self.assets, self.player)
+                    self.player = Player(self.assets, self.sounds, load_values= i)
+                    self.enemy_manager = EnemyManager(self.assets, self.scene_manager.sounds, self.player)
                     print("PLAYER LOADED")
                 elif i["type"] == "Projectile":
                     if i["friendly"]:
@@ -31,17 +32,26 @@ class GameScene:
                     boat = BoatEnemy(self.assets, load_values= i)
                     boat.player_pos = self.enemy_manager.player_pos
                     self.enemy_manager.boat_group.add(boat)
-                    self.enemy_manager.all_sprites.add(boat)
+                    self.enemy_manager.enemy_group.add(boat)
                     print("BOAT LOADED")
                 elif i["type"] == "SeaEnemy":
-                    fish = SeaEnemy(self.assets.get("shark"), load_values= i)
+                    fish = SeaEnemy(self.assets, load_values= i)
                     fish.player_pos = self.enemy_manager.player_pos
                     self.enemy_manager.water_group.add(fish)
-                    self.enemy_manager.all_sprites.add(fish)
+                    self.enemy_manager.enemy_group.add(fish)
                     print("FISH LOADED")
+                elif i["type"] == "Plank":
+                    self.enemy_manager.collectables.all_sprites.add(Plank(self.assets, load_values= i))
+                    print("PLANK LOADED")
+                elif i["type"] == "Treasure":
+                    self.enemy_manager.collectables.all_sprites.add(Plank(self.assets, load_values= i))
+                    print("TREASURE LOADED")
+                elif i["type"] == "Upgrade":
+                    self.enemy_manager.collectables.all_sprites.add(Upgrade(self.assets, self.player, load_values= i))
+                    print("UPGRADE LOADED")
         else:
-            self.player = Player(self.assets)
-            self.enemy_manager = EnemyManager(self.assets, self.player)
+            self.player = Player(self.assets, self.sounds)
+            self.enemy_manager = EnemyManager(self.assets, self.sounds, self.player)
 
         self.background = Background(self.assets)
         self.camera = Camera(self.player.pos)
@@ -73,7 +83,10 @@ class GameScene:
             sprites = copy.deepcopy(list(self.camera.all_sprites)[1:]) # INDEX 0 WILL ALWAYS BE A BACKGROUND SPRITE SO IT DOESNT NEED TO BE SAVED
             for obj in sprites:
                 obj.type = obj.__class__.__name__
-                del obj.assets
+                try:
+                    del obj.assets
+                except:
+                    pass
                 save_data.append(obj)
 
             data = json.dumps(save_data, cls= SetEncoder, indent= 4)

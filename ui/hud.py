@@ -44,7 +44,13 @@ class HUD:
         treasure_rect = treasure_text.get_rect(right = constants.WIDTH - 5)
 
         self.display.blit(treasure_text, treasure_rect)
+
+    def display_upgrades(self):
+        upgrade_text = self.font.render('\n'.join(f"{key.upper().replace('_', ' ')}: {value}" for key, value in self.player.upgrades.items()), True, '#202020')
+        upgrade_rect = upgrade_text.get_rect(midleft = (5, constants.HEIGHT / 2))
     
+        self.display.blit(upgrade_text, upgrade_rect)
+
     def check_f3(self):
         key_down = pygame.key.get_just_pressed()
         if key_down[pygame.K_F3]:
@@ -73,4 +79,5 @@ class HUD:
         self.display_ammo()
         self.display_health()
         self.display_treasure()
+        self.display_upgrades()
         self.cursor.update()
