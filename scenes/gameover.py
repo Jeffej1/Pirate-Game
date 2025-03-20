@@ -8,9 +8,9 @@ class GameOverScene:
 
         self.cursor = Cursor()
 
-        restart_button = Button((constants.WIDTH / 2 - 500, self.height - 400), 1000, 100, '#A06020', '#602000', '#C08040', "RESTART", self.restart, 15, 20, 50)
-        settings_button = Button((constants.WIDTH / 2 - 500, self.height - 275), 1000, 100, '#808080', '#202020', '#A0A0A0', "SETTINGS", self.settings_scene, 15, 20, 50)
-        quit_button = Button((constants.WIDTH / 2 - 500, self.height - 150), 1000, 100, '#A06020', '#602000', '#C08040', "QUIT", self.quit_game, 15, 20, 50)
+        restart_button = Button((constants.WIDTH / 2 - 500, constants.HEIGHT - 400), 1000, 100, '#A06020', '#602000', '#C08040', "RESTART", self.restart, 15, 20, 50)
+        settings_button = Button((constants.WIDTH / 2 - 500, constants.HEIGHT - 275), 1000, 100, '#808080', '#202020', '#A0A0A0', "SETTINGS", self.settings_scene, 15, 20, 50)
+        quit_button = Button((constants.WIDTH / 2 - 500, constants.HEIGHT - 150), 1000, 100, '#A06020', '#602000', '#C08040', "QUIT", self.quit_game, 15, 20, 50)
 
         gui = {
             "restart": restart_button,
@@ -40,8 +40,7 @@ class GameOverScene:
         collectables_missed_multiplier = self.collectables_missed / ((self.treasure / 5) + self.health_collected + self.collectables_missed + 1) # +1 incase of total collected being 0
 
         score *= collectables_missed_multiplier
-        score *= 100
-        return score
+        return int(score)
 
     def create_text(self):
         font = pygame.font.SysFont('segoeuiblack', 50)

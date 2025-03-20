@@ -18,7 +18,6 @@ class Projectile(Entity):
         self.accel = float(accel)
         self.angle = int(angle)
 
-
         if load_values is not None:
             for key, value in load_values.items():
                 if key == "pos" or key == "player_pos" or key == "mouse_pos":
@@ -62,10 +61,10 @@ class Projectile(Entity):
             self.kill()
 
     def border_collision(self):
-        if -constants.border_dist >= self.pos.x or self.pos.x >= constants.border_dist:
+        if -constants.BORDER_DIST >= self.pos.x or self.pos.x >= constants.BORDER_DIST:
             if not self.dead:
                 self.splash()
-        if -constants.border_dist >= self.pos.y or self.pos.y >= constants.border_dist:
+        if -constants.BORDER_DIST >= self.pos.y or self.pos.y >= constants.BORDER_DIST:
             if not self.dead:
                 self.splash()
 

@@ -3,7 +3,7 @@ from entity.entity import *
 from ..timer import Timer
 
 class SeaEnemy(Entity):
-    def __init__(self, image, pos= (0, 0), player_pos= (0, 0), load_values= None):
+    def __init__(self, image, pos= (0, 0), player_pos= (0, 0), upgrade= False, load_values= None):
         super().__init__()
         self.image = image
         self.original = self.image
@@ -15,6 +15,7 @@ class SeaEnemy(Entity):
         self.player_pos = player_pos
         self.treasure = random.randint(0, 1)
         self.plank = 0
+        self.upgrade = upgrade
 
         self.health = self.max_health = 5
         self.invincible = False

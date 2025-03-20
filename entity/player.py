@@ -22,13 +22,20 @@ class Player(Entity):
         self.pos = pygame.Vector2(0,0)
         
         INVINCIBILITY_DURATION = 2_000
-        reload_duration = 600
-        cooldown_duration = 500
+        self.reload_duration = 600
+        self.cooldown_duration = 500
         self.loaded_cannonball = True
         self.cannonballs = pygame.sprite.Group()
         self.reloading = False
         
-        
+        self.upgrades = {
+            "max_ammo": 0,
+            "reload_speed": 0,
+            "rotation_speed": 0,
+            "max_speed": 0,
+            "proj_cooldown": 0,
+            }
+
         if load_values is not None:
             for key, value in load_values.items():
                 if key == "pos":
@@ -38,8 +45,8 @@ class Player(Entity):
                 setattr(self, key, value)
             self.image = pygame.transform.rotate(self.original, self.angle)
 
-        self.reload_timer = Timer(reload_duration)
-        self.cooldown_timer = Timer(cooldown_duration)
+        self.reload_timer = Timer(self.reload_duration)
+        self.cooldown_timer = Timer(self.cooldown_duration)
         self.damage_cooldown = Timer(INVINCIBILITY_DURATION)
         
     def get_input(self):
@@ -114,6 +121,7 @@ class Player(Entity):
         self.move()
         self.proj_cooldown()
         self.cannonballs.update()
+        print(self.upgrades)
 
         if self.border_collision() and self.damage_cooldown.finished():
             self.damage_cooldown.reset()

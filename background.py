@@ -14,7 +14,7 @@ class Background(pygame.sprite.Sprite):
         self.draw_image()
 
     def draw_image(self):
-        water_diameter = 2 * constants.border_dist
+        water_diameter = 2 * constants.BORDER_DIST
         beach_section = pygame.Surface((water_diameter + constants.WIDTH, constants.WIDTH / 2))
         water_section = pygame.Surface((water_diameter, water_diameter))
 

@@ -25,17 +25,17 @@ class Entity(pygame.sprite.Sprite):
 
     def border_collision(self):
         collided = False
-        if self.pos.x >= constants.border_dist: 
-            self.pos.x = constants.border_dist
+        if self.pos.x >= constants.BORDER_DIST: 
+            self.pos.x = constants.BORDER_DIST
             collided = True
-        if self.pos.x <= -constants.border_dist: 
-            self.pos.x = -constants.border_dist
+        if self.pos.x <= -constants.BORDER_DIST: 
+            self.pos.x = -constants.BORDER_DIST
             collided = True
-        if self.pos.y >= constants.border_dist:
-            self.pos.y = constants.border_dist
+        if self.pos.y >= constants.BORDER_DIST:
+            self.pos.y = constants.BORDER_DIST
             collided = True
-        if self.pos.y <= -constants.border_dist: 
-            self.pos.y = -constants.border_dist
+        if self.pos.y <= -constants.BORDER_DIST: 
+            self.pos.y = -constants.BORDER_DIST
             collided = True
 
         if collided:

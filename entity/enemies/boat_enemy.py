@@ -4,7 +4,7 @@ from ..timer import Timer
 from..projectile import Projectile
 
 class BoatEnemy(Entity):
-    def __init__(self, assets, pos= (0, 0), player_pos= (0, 0), load_values= None):
+    def __init__(self, assets, pos= (0, 0), player_pos= (0, 0), upgrade= False, load_values= None):
         super().__init__()
         self.assets = assets
         self.image = self.assets.get("enemy_boat")
@@ -16,6 +16,7 @@ class BoatEnemy(Entity):
         self.player_pos = player_pos
         self.treasure = random.randint(0, 2)
         self.plank = 3 if random.random() < 0.1 else 2
+        self.upgrade = upgrade
 
         self.angle = self.desired_angle = 0
         self.health = self.max_health = 15

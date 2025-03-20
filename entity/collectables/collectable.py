@@ -2,7 +2,7 @@ import pygame, random
 from ..entity import Entity
 
 class Plank(Entity):
-    def __init__(self, pos):
+    def __init__(self, assets, pos):
         super().__init__()
         self.image = pygame.Surface((16, 4))
         self.image.fill('#FFFFFF')
@@ -17,7 +17,7 @@ class Plank(Entity):
         self.kill()
 
 class Treasure(Entity):
-    def __init__(self, pos):
+    def __init__(self, assets, pos):
         super().__init__()
         self.image = pygame.Surface((16, 16))
         self.image.fill('#FFFFFF')

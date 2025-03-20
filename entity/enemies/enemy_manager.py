@@ -23,11 +23,12 @@ class EnemyManager:
         self.boat_spawn_timer = Timer(10_000)
         self.water_spawn_timer = Timer(5_000)
 
-        self.max_water = 2
+        self.max_water = 3
         self.max_boat = 2
         self.total_killed = self.boat_killed = self.water_killed = 0
+        self.upgrade_due = False
 
-        self.collectables = CollectableManager(self.player)
+        self.collectables = CollectableManager(self.assets, self.player)
 
     def enemy_collisions(self):
         for enemy in self.enemy_group:
@@ -52,7 +53,7 @@ class EnemyManager:
                     self.boat_killed +=1
                 elif enemy_type == "SeaEnemy":
                     self.water_killed += 1
-                self.collectables.spawn_collectable(enemy.pos, plank= enemy.plank, treasure= enemy.treasure)
+                self.collectables.spawn_collectable(enemy.pos, plank= enemy.plank, treasure= enemy.treasure, upgrade= enemy.upgrade)
 
         for proj in self.proj_group:
             if pygame.sprite.collide_mask(self.player, proj):
@@ -61,20 +62,29 @@ class EnemyManager:
                 
     def border_collision(self, x_pos, y_pos):
         collided = False
-        if x_pos >= constants.border_dist: 
-            x_pos = constants.border_dist
+        if x_pos >= constants.BORDER_DIST: 
+            x_pos = constants.BORDER_DIST
             collided = True
-        if x_pos <= -constants.border_dist: 
-            x_pos = -constants.border_dist
+        if x_pos <= -constants.BORDER_DIST: 
+            x_pos = -constants.BORDER_DIST
             collided = True
-        if y_pos >= constants.border_dist:
-            y_pos = constants.border_dist
+        if y_pos >= constants.BORDER_DIST:
+            y_pos = constants.BORDER_DIST
             collided = True
-        if y_pos <= -constants.border_dist: 
-            y_pos = -constants.border_dist
+        if y_pos <= -constants.BORDER_DIST: 
+            y_pos = -constants.BORDER_DIST
             collided = True
 
         if collided:
+            return True
+        return False
+    
+    def get_upgrade(self):
+        if (self.total_killed + 1) % 5 == 0:
+            self.upgrade_due = True
+        
+        if self.upgrade_due:
+            self.upgrade_due = False
             return True
         return False
 
@@ -112,7 +122,7 @@ class EnemyManager:
 
     def spawning_enemies(self):
         if self.boat_spawn_timer.finished() and len(self.boat_group.sprites()) != self.max_boat:
-            self.boat_group.add(BoatEnemy(self.assets, self.get_spawn_pos(), self.player_pos))
+            self.boat_group.add(BoatEnemy(self.assets, self.get_spawn_pos(), self.player_pos, self.get_upgrade()))
             self.enemy_group.add(self.boat_group.sprites()[-1])
             self.all_sprites.add(self.boat_group)
             self.boat_spawn_timer.reset()
@@ -120,7 +130,7 @@ class EnemyManager:
             self.boat_spawn_timer.reset()
 
         if self.water_spawn_timer.finished() and len(self.water_group.sprites()) != self.max_water:
-            self.water_group.add(SeaEnemy(self.assets.get("shark"), self.get_spawn_pos(), self.player_pos))
+            self.water_group.add(SeaEnemy(self.assets.get("shark"), self.get_spawn_pos(), self.player_pos, self.get_upgrade()))
             self.enemy_group.add(self.water_group.sprites()[-1])
             self.all_sprites.add(self.water_group)
             self.water_spawn_timer.reset()
