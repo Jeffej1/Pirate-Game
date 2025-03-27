@@ -27,9 +27,9 @@ class Player(Entity):
         self.reload_duration = 600
         self.cooldown_duration = 500
         self.loaded_cannonball = True
-        self.cannonballs = pygame.sprite.Group()
         self.reloading = False
         
+        self.max_upgrades = False
         self.upgrades = {
             "max_ammo": 0,
             "reload_speed": 0,
@@ -47,6 +47,7 @@ class Player(Entity):
                 setattr(self, key, value)
             self.image = pygame.transform.rotate(self.original, self.angle)
 
+        self.cannonballs = pygame.sprite.Group()
         self.reload_timer = Timer(self.reload_duration)
         self.cooldown_timer = Timer(self.cooldown_duration)
         self.damage_cooldown = Timer(INVINCIBILITY_DURATION)

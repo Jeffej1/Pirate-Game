@@ -87,7 +87,7 @@ class EnemyManager:
         return False
     
     def get_upgrade(self):
-        if (self.enemies_spawned + 1) % 5 == 0:
+        if (self.enemies_spawned + 1) % 3 == 0:
             self.upgrade_due = True
         
         if self.upgrade_due:

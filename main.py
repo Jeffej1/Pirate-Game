@@ -5,7 +5,7 @@ class MainGame:
     def __init__(self):
         pygame.init()
         self.display = pygame.display.set_mode((constants.WIDTH, constants.HEIGHT))
-        pygame.display.set_caption("YARGHHH")
+        pygame.display.set_caption("PIRATE GAME")
         self.scene_manager = SceneManager()
 
     def run(self):

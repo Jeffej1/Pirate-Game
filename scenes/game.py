@@ -44,10 +44,10 @@ class GameScene:
                     self.enemy_manager.collectables.all_sprites.add(Plank(self.assets, load_values= i))
                     print("PLANK LOADED")
                 elif i["type"] == "Treasure":
-                    self.enemy_manager.collectables.all_sprites.add(Plank(self.assets, load_values= i))
+                    self.enemy_manager.collectables.all_sprites.add(Treasure( self.assets, load_values= i))
                     print("TREASURE LOADED")
                 elif i["type"] == "Upgrade":
-                    self.enemy_manager.collectables.all_sprites.add(Upgrade(self.assets, self.player, load_values= i))
+                    self.enemy_manager.collectables.all_sprites.add(Upgrade(self.assets, load_values= i))
                     print("UPGRADE LOADED")
         else:
             self.player = Player(self.assets, self.sounds)
@@ -77,21 +77,21 @@ class GameScene:
         }
         self.ui_manager = UIManager(gui)
 
+
     def save_game(self):
         with open('./save.cfg', 'w') as save:
             save_data = []
-            sprites = copy.deepcopy(list(self.camera.all_sprites)[1:]) # INDEX 0 WILL ALWAYS BE A BACKGROUND SPRITE SO IT DOESNT NEED TO BE SAVED
+            sprites = copy.copy(list(self.camera.all_sprites)[1:]) # INDEX 0 WILL ALWAYS BE A BACKGROUND SPRITE SO IT DOESNT NEED TO BE SAVED
             for obj in sprites:
                 obj.type = obj.__class__.__name__
-                try:
-                    del obj.assets
-                except:
-                    pass
+                obj.__dict__.pop("assets", "NOT FOUND")
+                obj.__dict__.pop("sounds", "NOT FOUND")
                 save_data.append(obj)
 
             data = json.dumps(save_data, cls= SetEncoder, indent= 4)
             save.write(data)
             save.close()
+        self.load_game()
 
     def load_game(self):
         with open('./save.cfg', 'r') as save:
@@ -167,7 +167,7 @@ class SetEncoder(json.JSONEncoder):
         if isinstance(obj, Entity):
             obj = obj.__dict__ # Needs to be a dictionary to serialise
             for i in list(obj.keys()):
-                if isinstance(obj[i], (pygame.sprite.Group, pygame.surface.Surface, pygame.rect.Rect, dict)):
+                if isinstance(obj[i], (pygame.sprite.Group, pygame.surface.Surface, pygame.rect.Rect, dict)) and i != "upgrades":
                     del obj[i] # Attributes that don't need to be saved or can't be serialised
             return obj
         # Not needed to be saved

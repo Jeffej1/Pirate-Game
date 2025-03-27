@@ -19,7 +19,7 @@ class CollectableManager:
         for i in range(int(treasure)):
             self.all_sprites.add(Treasure(self.assets, (pos[0] + random.randint(-50, 50), pos[1] + random.randint(-50, 50))))
         if upgrade:
-            self.all_sprites.add(Upgrade(self.assets, self.player, (pos[0] + random.randint(-50, 50), pos[1] + random.randint(-50, 50))))
+            self.all_sprites.add(Upgrade(self.assets, (pos[0] + random.randint(-50, 50), pos[1] + random.randint(-50, 50))))
 
     def collected(self, enemies):
         for sprite in self.all_sprites:

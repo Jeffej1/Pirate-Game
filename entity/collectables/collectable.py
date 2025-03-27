@@ -4,8 +4,7 @@ from ..entity import Entity
 class Plank(Entity):
     def __init__(self, assets, pos= (0, 0), load_values= None):
         super().__init__()
-        self.image = pygame.Surface((16, 4))
-        self.image.fill('#FFFFFF')
+        self.image = assets.get("plank")
         self.pos = pygame.Vector2(pos)
         self.rect = self.image.get_rect()
         rotation = random.randint(0, 359)
@@ -26,8 +25,7 @@ class Plank(Entity):
 class Treasure(Entity):
     def __init__(self, assets, pos= (0, 0), load_values= None):
         super().__init__()
-        self.image = pygame.Surface((16, 16))
-        self.image.fill('#FFFFFF')
+        self.image = assets.get("treasure")
         self.pos = pygame.Vector2(pos)
         self.rect = self.image.get_rect()
         rotation = random.randint(0, 359)

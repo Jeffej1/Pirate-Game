@@ -47,7 +47,7 @@ class HUD:
 
     def display_upgrades(self):
         upgrade_text = self.font.render('\n'.join(f"{key.upper().replace('_', ' ')}: {value}" for key, value in self.player.upgrades.items()), True, '#202020')
-        upgrade_rect = upgrade_text.get_rect(midleft = (5, constants.HEIGHT / 2))
+        upgrade_rect = upgrade_text.get_rect(topleft = (5, 70))
     
         self.display.blit(upgrade_text, upgrade_rect)
 
@@ -60,15 +60,10 @@ class HUD:
                 self.extra_active = True
 
     def extra_info(self, fps: int):
-        # DISPLAY FPS
-        fps_text = self.font.render(str(fps), True, '#202020')
-        fps_rect = fps_text.get_rect(topleft = (5, 70))
+        # DISPLAY FPS AND POSITION
+        fps_text = self.font.render(f"{fps}\n{self.player.pos}", True, '#202020')
+        fps_rect = fps_text.get_rect(bottomleft = (5, constants.HEIGHT))
         self.display.blit(fps_text, fps_rect)
-
-        # DISPLAY POSITION
-        pos_text = self.font.render(str(self.player.pos), True, '#202020')
-        pos_rect = pos_text.get_rect(topleft = (5, 95))
-        self.display.blit(pos_text, pos_rect)
 
     def update(self, fps: float):
         constants.WIDTH, constants.HEIGHT = self.display.get_size()

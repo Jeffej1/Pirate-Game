@@ -7,7 +7,10 @@ class SettingsScene:
         self.display = pygame.display.get_surface()
         self.cursor = Cursor()
 
+        self.sounds = self.scene_manager.sounds
+
         self.read_cfg()
+        self.set_volume()
 
         master_volume = Slider((500, 250), 0, 100, self.master, '#804010', '#602000', '#905020', '#A06020', "Master Volume", 600, font_size = 50)
         music_volume = Slider((500, 400), 0, 100, self.music, '#804010', '#602000', '#905020', '#A06020', "Music Volume", 600, font_size = 50)
@@ -23,7 +26,12 @@ class SettingsScene:
 
     def back_scene(self):
         self.change_cfg()
+        print(3)
         self.scene_manager.change_scene(self.scene_manager.previous_scene)
+
+    def set_volume(self):
+        print(1)
+        self.sounds.set_volume(self.master, self.music, self.effect)
 
     def read_cfg(self):
         with open("./settings.cfg", "r") as cfg:
@@ -36,6 +44,7 @@ class SettingsScene:
             cfg.close()
 
     def change_cfg(self):
+        print(2)
         with open("./settings.cfg", "w") as cfg:
             values = {}
             for key, value in self.ui_manager.gui.items():
@@ -44,6 +53,12 @@ class SettingsScene:
             data = json.dumps(values, indent= 4)
             cfg.write(data)
             cfg.close()
+
+        self.master = self.ui_manager.gui.get("master").current_value
+        self.music = self.ui_manager.gui.get("music").current_value
+        self.effect = self.ui_manager.gui.get("effect").current_value
+
+        self.set_volume()
 
     def update(self):
         self.display.fill('#404040')

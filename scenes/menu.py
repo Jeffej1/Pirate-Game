@@ -24,6 +24,8 @@ class MenuScene:
             }
         self.ui_manager = UIManager(gui)
 
+        self.scene_manager.sounds.play_music()
+
     def game_scene(self):
         self.scene_manager.change_scene("game")
 
