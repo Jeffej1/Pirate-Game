@@ -364,6 +364,7 @@ FodyWeavers.xsd
 /.VSCodeCounter/2024-03-01_10-58-31
 
 .VSCodeCounter
+.cfg
 
 saves/*
 pygame
