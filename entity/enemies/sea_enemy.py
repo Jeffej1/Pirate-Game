@@ -20,7 +20,7 @@ class SeaEnemy(Entity):
         self.health = self.max_health = 5
         self.invincible = False
 
-        if load_values is not None:
+        if load_values is not None: # If a save is available, load the values
             for key, value in load_values.items():
                 if key == "pos" or key == "player_pos":
                     value = pygame.Vector2(value)
@@ -31,14 +31,14 @@ class SeaEnemy(Entity):
 
     def move_to_player(self):
         dx, dy = self.player_pos - self.pos
-        angle = math.degrees(math.atan2(dy, dx)) + 180
-        if self.rotation != angle:
+        angle = math.degrees(math.atan2(dy, dx)) + 180 # Get the angle towards the player (+ 180 because of the rotation of the sprite's image )
+        if self.rotation != angle: # Rotate the image when necessary
             self.rotation = angle
             self.image = pygame.transform.rotate(self.original, self.rotation)
 
         dist = math.hypot(dx, dy)
 
-        if dist > 75:
+        if dist >= 80: # Move towards the player when 80 pixels away
             self.pos += pygame.Vector2(dx, dy).normalize() * 3
 
     def update(self):

@@ -30,7 +30,7 @@ class Player(Entity):
         self.reloading = False
         
         self.max_upgrades = False
-        self.upgrades = {
+        self.upgrades = { # All the upgrades the player can get along with how many they have
             "max_ammo": 0,
             "reload_speed": 0,
             "rotation_speed": 0,
@@ -38,12 +38,10 @@ class Player(Entity):
             "proj_cooldown": 0,
             }
 
-        if load_values is not None:
+        if load_values is not None: # If a save is available load the values
             for key, value in load_values.items():
                 if key == "pos":
                     value = pygame.Vector2(value)
-                # if value is type(dict):
-                #     value = None
                 setattr(self, key, value)
             self.image = pygame.transform.rotate(self.original, self.angle)
 
@@ -57,6 +55,7 @@ class Player(Entity):
         key_down = pygame.key.get_just_pressed()
         mouse = pygame.mouse.get_pressed()
 
+        # Player movement and rotation
         if keys[pygame.K_w] and self.vel < self.max_vel: 
             self.vel += 0.02
         if keys[pygame.K_a]:
@@ -73,33 +72,35 @@ class Player(Entity):
             elif self.vel < 0:
                 self.vel += 0.05
 
-        if keys[pygame.K_r] and self.reload_timer.finished() and self.ammo < self.max_ammo:
+        if keys[pygame.K_r] and self.reload_timer.finished() and self.ammo < self.max_ammo: # Start reloading
             self.reloading = True
             self.reload_timer.reset()
 
-        if self.reloading:
+        if self.reloading: # Reload after R is pressed
             self.reload_proj()
 
+        # Reset angles if they go out of bounds
         if self.angle >= 360: self.angle = 0
         elif self.angle <= -1: self.angle = 359
 
-        if mouse[0] and self.loaded_cannonball:
+        if mouse[0] and self.loaded_cannonball: # Fire projectile if the user left clicks and the player has ammo
             self.fire_proj()
             self.loaded_cannonball = False
             self.cooldown_timer.reset()
 
-        if key_down[pygame.K_j]:
-            self.remove_health(5)
-        if key_down[pygame.K_k]:
-            self.add_health(5)
-
     def fire_proj(self):
+        """
+        Fire the cannonball if ready
+        """
         if self.ammo > 0 and self.reload_timer.finished():
             self.cannonballs.add(Projectile(self.assets, self.pos, self.angle, accel= self.accel, friendly= True))
             self.ammo -= 1
             self.sounds.play("cannonball")
 
     def reload_proj(self):
+        """
+        Continuously reload ammo until the player is back at max ammo
+        """
         if self.ammo < self.max_ammo and self.reload_timer.finished():
             self.ammo += 1
             if self.ammo < self.max_ammo:
@@ -108,11 +109,14 @@ class Player(Entity):
                 self.reloading = False
 
     def proj_cooldown(self):
+        """
+        Manages the cooldown between firing projectiles
+        """
         if self.cooldown_timer.finished():
             self.loaded_cannonball = True
 
     def move(self):
-        if -0.01 <= self.vel <= 0.01:
+        if -0.01 <= self.vel <= 0.01: # Prevents very small values slowly moving the player causing drifting
             self.vel = 0
 
         self.accel = self.vel ** 3 / 4
@@ -124,8 +128,8 @@ class Player(Entity):
         self.get_input()
         self.move()
         self.proj_cooldown()
-        self.cannonballs.update()
+        self.cannonballs.update() # Updates all the cannonballs fired by the player
 
-        if self.border_collision() and self.damage_cooldown.finished():
+        if self.border_collision() and self.damage_cooldown.finished(): # Damages the player if they touch the beach
             self.damage_cooldown.reset()
             self.remove_health(5)

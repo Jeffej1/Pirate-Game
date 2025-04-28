@@ -17,11 +17,11 @@ class Background(pygame.sprite.Sprite):
         beach_section = pygame.Surface((water_diameter + constants.WIDTH, constants.WIDTH / 2))
         water_section = pygame.Surface((water_diameter, water_diameter))
 
-        for x in range(0, water_section.get_width(), self.water.get_width()):
+        for x in range(0, water_section.get_width(), self.water.get_width()): # Creates a large surface with the water sprite
             for y in range(0, water_section.get_height(), self.water.get_height()):
                 water_section.blit(self.water, (x, y))
 
-        for x in range(0, beach_section.get_width(), self.beach.get_width()):
+        for x in range(0, beach_section.get_width(), self.beach.get_width()): # Creates a surface for a single border with the beach sprite
             for y in range(0, beach_section.get_height(), self.beach.get_height()):
                 beach_section.blit(self.beach, (x, y))
 
@@ -31,3 +31,4 @@ class Background(pygame.sprite.Sprite):
         self.image.blit(pygame.transform.rotate(beach_section, 90), beach_section.get_rect())
         self.image.blit(pygame.transform.rotate(beach_section, 180), beach_section.get_rect(bottom = self.image.get_height()))
         self.image.blit(pygame.transform.rotate(beach_section, 270), beach_section.get_rect(left = self.image.get_height() - constants.WIDTH / 2))
+        # Displays all the borders and the ocean

@@ -6,6 +6,9 @@ class Timer:
         self.reset()
 
     def finished(self):
+        """
+        Returns whether the timer has finished or not
+        """
         self.current_time = pygame.time.get_ticks()
         if self.current_time - self.initial_time >= self.duration:
             return True

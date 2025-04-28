@@ -1,4 +1,4 @@
-import pygame, json, copy, constants
+import pygame, json, copy, constants, os.path
 from entity import *
 from ui import *
 from assetloader import Assets
@@ -13,7 +13,7 @@ class GameScene:
         self.assets = self.scene_manager.assets
         self.sounds = self.scene_manager.sounds
 
-        if load_values is not None:
+        if load_values is not None: # Loads the save if available and sets the attributes of the objects to the saved values
             for i in load_values:
                 if i["type"] == "Player":
                     self.player = Player(self.assets, self.sounds, load_values= i)
@@ -67,7 +67,7 @@ class GameScene:
         quit_button = Button((constants.WIDTH / 2 - 500, constants.HEIGHT / 2 + 275), 1000, 100, '#A06020', '#602000', '#C08040', "QUIT", self.quit_game, 15, 20, 50)
         end_button = Button((constants.WIDTH - 100, 100), 100, 100, '#808080', '#202020', '#A0A0A0', "END", self.game_over, 15, 20, 10)
 
-        gui = {
+        gui = { # Contains all the buttons
             "continue": continue_button,
             "save": save_button,
             "load": load_button,
@@ -81,19 +81,21 @@ class GameScene:
     def save_game(self):
         with open('./save.cfg', 'w') as save:
             save_data = []
-            sprites = copy.copy(list(self.camera.all_sprites)[1:]) # INDEX 0 WILL ALWAYS BE A BACKGROUND SPRITE SO IT DOESNT NEED TO BE SAVED
+            sprites = copy.copy(list(self.camera.all_sprites)[1:]) # Index 0 will always be the background so it doesnt need to be saved
             for obj in sprites:
                 obj.type = obj.__class__.__name__
                 obj.__dict__.pop("assets", "NOT FOUND")
                 obj.__dict__.pop("sounds", "NOT FOUND")
                 save_data.append(obj)
 
-            data = json.dumps(save_data, cls= SetEncoder, indent= 4)
+            data = json.dumps(save_data, cls= Encoder, indent= 4) # Saves the data to a file in JSON format
             save.write(data)
             save.close()
         self.load_game()
 
     def load_game(self):
+        if not os.path.isfile("./save.cfg"):
+            save = open("./save.cfg", "x")
         with open('./save.cfg', 'r') as save:
             try:
                 save_data = json.load(save)
@@ -108,9 +110,12 @@ class GameScene:
 
     def unpause(self):
         self.paused = False
-        self.ui_manager.hovering_any = False
+        self.ui_manager.hovering_any = False # Resets the cursor back to the default ARROW icon
 
     def game_over(self):
+        """
+        Switches to the Game Over scene and sets the attributes of the scene to contain specific stats to be displayed or used to calculate the score
+        """
         end_scene = self.scene_manager.scene_list["end"]
 
         self.camera.render(self.background, self.player, self.player.cannonballs, self.enemy_manager.all_sprites, self.enemy_manager.collectables.all_sprites)
@@ -145,22 +150,27 @@ class GameScene:
             if self.player.health_check(kill_entity= False):
                 self.game_over()
 
-            if p_key_pressed:
+            if p_key_pressed: # Gets background blur when paused excluding the HUD
                 self.blur_surface = pygame.transform.gaussian_blur(self.display, 2)
                 self.paused = True
 
             self.hud.update(self.scene_manager.clock.get_fps())
-            self.time_played += 1
+            self.time_played += 1 # Calculates total frames played, used to calculate the score
         else:
             self.display.blit(self.blur_surface, (0, 0))
 
-            self.ui_manager.update()
+            self.ui_manager.update() # Displays and updates the buttons
             self.hud.update(self.scene_manager.clock.get_fps())
 
             if p_key_pressed:
                 self.unpause()
 
-class SetEncoder(json.JSONEncoder):
+class Encoder(json.JSONEncoder):
+    """
+    Used when saving the game.
+    Converts every unserialisable data structure into a serialisable structure so it can be saved.
+    Deletes unnecessary data structures that can't be saved/don't need to be saved.
+    """
     def default(self, obj):
         if isinstance(obj, pygame.Vector2):
             return tuple(obj) # Can't directly serialise a pygame.Vector2

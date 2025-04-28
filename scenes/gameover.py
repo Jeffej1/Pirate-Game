@@ -12,7 +12,7 @@ class GameOverScene:
         settings_button = Button((constants.WIDTH / 2 - 500, constants.HEIGHT - 275), 1000, 100, '#808080', '#202020', '#A0A0A0', "SETTINGS", self.settings_scene, 15, 20, 50)
         quit_button = Button((constants.WIDTH / 2 - 500, constants.HEIGHT - 150), 1000, 100, '#A06020', '#602000', '#C08040', "QUIT", self.quit_game, 15, 20, 50)
 
-        gui = {
+        gui = { # Contains all the buttons
             "restart": restart_button,
             "settings": settings_button,
             "quit": quit_button,
@@ -30,6 +30,9 @@ class GameOverScene:
         self.scene_manager.change_scene("settings")
 
     def create_score(self) -> float:
+        """
+        Creates a score value based on certain values/statistics acheived by the player
+        """
         score = 0
         score += self.total_killed * 150
         score += self.boat_killed * 50 + self.water_killed * 30
@@ -37,12 +40,16 @@ class GameOverScene:
         score -= self.collectables_missed * 33
         score -= self.health_collected * 11
         time_multipler = (self.treasure * 500 / self.time_played)
-        collectables_missed_multiplier = self.collectables_missed / ((self.treasure / 5) + self.health_collected + self.collectables_missed + 1) # +1 incase of total collected being 0
+        collectables_missed_multiplier = 1 - (self.collectables_missed / ((self.treasure / 5) + self.health_collected + self.collectables_missed + 1)) # +1 incase of total collected being 0
 
         score *= collectables_missed_multiplier
+        score *= time_multipler
         return int(score)
 
     def create_text(self):
+        """
+        Creates text for the statistics shown
+        """
         font = pygame.font.SysFont('segoeuiblack', 50)
 
         text = f"TREASURE COLLECTED: {self.treasure}\nENEMY BOATS KILLED: {self.boat_killed}\nSHARKS KILLED: {self.water_killed}\nTOTAL KILLED: {self.total_killed}\nPLANKS USED: {self.health_collected}\nCOLLECTABLES MISSED: {self.collectables_missed}"
@@ -58,7 +65,7 @@ class GameOverScene:
         self.display.blit(self.score_surf, self.score_rect)
 
     def update(self):
-        self.display.blit(self.blur_surface, (0, 0))
+        self.display.blit(self.blur_surface, (0, 0)) # Displays a blurred image of the final frame from the game scene before the player died
         self.display_text()
         self.ui_manager.update()
         self.cursor.update()

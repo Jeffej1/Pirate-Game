@@ -59,7 +59,7 @@ class Button:
             self.hovering = False
 
         if self.hovering and pygame.mouse.get_pressed()[0]:
-            self.rect.y = self.screen_pos[1] + 2
+            self.rect.y = self.screen_pos[1] + 2 # Moves the button down 2 pixels when hovering
         else:
             self.rect.y = self.screen_pos[1]
 
@@ -109,6 +109,7 @@ class Slider:
     def change_value(self, mouse_pos):
         min_pos, max_pos = self.screen_pos[0], self.screen_pos[0] + self.size[0]
 
+        # Clamps the value to the max/min if the mouse is too far to the right/left
         if mouse_pos[0] > max_pos: self.current_value = self.max
         elif mouse_pos[0] < min_pos: self.current_value = self.min
         else: self.current_value = round((mouse_pos[0] - self.screen_pos[0]) * self.dist_percentage, 0)

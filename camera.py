@@ -13,14 +13,13 @@ class Camera:
             return list
         sorted_list = []
         i, j = 0, 0
-        sorted_list.sort()
 
         mid = len(list) // 2
         left = self.mergesort(list[:mid])
         right = self.mergesort(list[mid:])
 
         while i < len(left) and j < len(right):
-            if left[i][1] >= right[j][1]:
+            if left[i][1] >= right[j][1]: # Sorts by index 1 as that is the z layer
                 sorted_list.append(right[j])
                 j += 1
             else:
@@ -39,12 +38,12 @@ class Camera:
         for sprite in self.all_sprites:
             draw_order.append([sprite, sprite.zlayer])
 
-        draw_order = self.mergesort(draw_order)
+        draw_order = self.mergesort(draw_order) # Sorts the list by the z layer so it draws certain entities on top of others
 
-        for sprite in draw_order:
+        for sprite in draw_order: # Sets the screen position of all the sprites
             new_pos = pygame.Vector2(sprite[0].pos.x - self.player_pos.x, -sprite[0].pos.y + self.player_pos.y) + self.size / 2
             sprite[0].rect = sprite[0].image.get_rect(center = new_pos)
             self.display.blit(sprite[0].image, sprite[0].rect)
 
     def update(self):
-        self.pos = self.player_pos
+        self.pos = self.player_pos # Keeps camera centred on the player

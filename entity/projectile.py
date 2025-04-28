@@ -11,14 +11,14 @@ class Projectile(Entity):
         self.rect = self.image.get_rect()
 
         self.zlayer = 2
-        self.friendly = friendly
+        self.friendly = friendly # True if fired by the player
         self.mouse_pos = pygame.Vector2(pygame.mouse.get_pos())
         self.pos = pygame.Vector2(pos)
         self.player_pos = pygame.Vector2(player_pos)
         self.accel = float(accel)
         self.angle = int(angle)
 
-        if load_values is not None:
+        if load_values is not None: # If a save is available it loads the values
             for key, value in load_values.items():
                 if key == "pos" or key == "player_pos" or key == "mouse_pos":
                     value = pygame.Vector2(value)
@@ -28,9 +28,9 @@ class Projectile(Entity):
         self.death_timer = Timer(5000)
         
         if self.friendly:
-            self.get_direction_to_mouse()
+            self.get_direction_to_mouse() # Fire towards the mouse if friendly
         else:
-            self.get_direction_to_player()
+            self.get_direction_to_player() # Fire towards the player if not friendly
 
     def get_direction_to_player(self):
         dx, dy = self.player_pos - self.pos
@@ -48,6 +48,9 @@ class Projectile(Entity):
         self.pos.y += self.accel * math.cos(math.radians(self.angle)) / 3
 
     def splash(self):
+        """
+        Cause the projectile to switch sprites after it has 'died' for 500 miliseconds
+        """
         self.image = self.splash_surf
         self.splash_timer = Timer(500)
         self.dead = True
@@ -61,6 +64,9 @@ class Projectile(Entity):
             self.kill()
 
     def border_collision(self):
+        """
+        Kill the projectile if it touches the beach
+        """
         if -constants.BORDER_DIST >= self.pos.x or self.pos.x >= constants.BORDER_DIST:
             if not self.dead:
                 self.splash()

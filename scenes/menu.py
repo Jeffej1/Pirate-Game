@@ -16,7 +16,7 @@ class MenuScene:
         quit_button = Button((constants.WIDTH - 475, constants.HEIGHT - 200), 400, 150, '#A06020', '#602000', '#C08040', "QUIT", self.quit_game, 15, 30, 60)
         settings_button = Button((25, 20), 125, 50, '#808080', '#202020', '#A0A0A0', "OPTIONS", self.settings_scene, 10, 40, 20)
 
-        gui = {
+        gui = { # Contains all the buttons for the game
             "play": play_button,
             "continue": continue_button,
             "quit": quit_button,
@@ -41,8 +41,8 @@ class MenuScene:
 
     def update(self):
         self.display.fill((0, 32, 224))
-        self.display.blit(self.image, self.rect)
+        self.display.blit(self.image, self.rect) # Displays the background
 
-        self.ui_manager.update()
+        self.ui_manager.update() # Checks to see if any of the buttons have been pressed and executes their associated function
         
         self.cursor.update()

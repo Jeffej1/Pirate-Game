@@ -1,4 +1,4 @@
-import pygame, json
+import pygame, json, os.path
 from ui import *
 
 class SettingsScene:
@@ -16,7 +16,8 @@ class SettingsScene:
         music_volume = Slider((500, 400), 0, 100, self.music, '#804010', '#602000', '#905020', '#A06020', "Music Volume", 600, font_size = 50)
         effect_volume = Slider((500, 550), 0, 100, self.effect, '#804010', '#602000', '#905020', '#A06020', "Effect Volume", 600, font_size = 50)
         back_button = Button((25, 20), 125, 50, '#808080', '#202020', '#A0A0A0', "BACK", self.back_scene, 10, 40, 20)
-        gui = {
+
+        gui = { # contains all the sliders and buttons
             "master": master_volume,
             "music": music_volume,
             "effect": effect_volume,
@@ -26,14 +27,14 @@ class SettingsScene:
 
     def back_scene(self):
         self.change_cfg()
-        print(3)
         self.scene_manager.change_scene(self.scene_manager.previous_scene)
 
     def set_volume(self):
-        print(1)
         self.sounds.set_volume(self.master, self.music, self.effect)
 
     def read_cfg(self):
+        if not os.path.isfile("./settings.cfg"):
+            cfg = open("./settings.cfg", "x")
         with open("./settings.cfg", "r") as cfg:
             try:
                 data = json.load(cfg)
@@ -44,7 +45,9 @@ class SettingsScene:
             cfg.close()
 
     def change_cfg(self):
-        print(2)
+        """
+        Saves and writes the values on the sliders to settings.cfg
+        """
         with open("./settings.cfg", "w") as cfg:
             values = {}
             for key, value in self.ui_manager.gui.items():
@@ -63,6 +66,6 @@ class SettingsScene:
     def update(self):
         self.display.fill('#404040')
         
-        self.ui_manager.update()
+        self.ui_manager.update() # Updates the sliders and buttons
 
         self.cursor.update()

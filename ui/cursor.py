@@ -13,7 +13,10 @@ class Cursor(pygame.sprite.Sprite):
         self.display.blit(self.image, self.rect)
         
     def update(self):
-        current_cursor = pygame.mouse.get_cursor()[0]
+        """
+        Draws the cursor and rotates it at a 45 degree angle depending on if it is hovering over a button or not 
+        """
+        current_cursor = pygame.mouse.get_cursor()[0] # Gets if the system cursor is set to HAND or ARROW
         if current_cursor == pygame.SYSTEM_CURSOR_HAND and self.rotation > -45:
             self.rotation -= 5
             self.image = pygame.transform.rotate(self.original, self.rotation)
